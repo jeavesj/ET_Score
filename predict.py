@@ -1,8 +1,15 @@
 
+import sys
 import joblib
 import argparse
 import numpy as np
 import pandas as pd
+import sklearn.ensemble._forest
+import sklearn.tree._classes
+import sklearn.tree._tree
+sys.modules.setdefault('sklearn.ensemble.forest', sklearn.ensemble._forest)
+sys.modules.setdefault('sklearn.tree.tree', sklearn.tree._classes)
+sys.modules.setdefault('sklearn.tree._tree', sklearn.tree._tree)
 from generate_feature import FeatureGeneration
 
 features = np.array(['cHH', 'cHC', 'cHN', 'cHO', 'cCH', 'cCC', 'cCN', 'cCO', 'cNH',
@@ -60,5 +67,6 @@ if __name__ == "__main__":
     data = pd.read_excel(feature.file_name, index_col = 0)
     empty_df = pd.DataFrame(columns = features)
     data = pd.concat([data, empty_df], axis = 0, sort = False).reindex(columns = features).fillna(value = 0.0)
+    data = data.replace([np.inf, -np.inf], 0.0)
     predict = model.predict(data)
     pd.DataFrame(data = predict, index = data.index, columns = ['prediction']).to_excel('prediction.xlsx')

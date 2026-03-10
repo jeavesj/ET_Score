@@ -59,7 +59,7 @@ class FeatureGeneration():
         
         """Internal function for calculating distances between ligand and protein atoms"""
         
-        return [np.round(sum(list(map(lambda m : 1./m**int(self.exp),filter(lambda n : n<int(self.cutoff),
+        return [np.round(sum(list(map(lambda m : 1./m**int(self.exp),filter(lambda n : 0 < n < int(self.cutoff),
             spatial.distance.cdist(xyz_ligand[x], xyz_protein[i][y]).ravel() )))),decimals = 2)
             for x in range(len(self.atoms_list)) for y in range(len(self.atoms_list))]
     
@@ -116,7 +116,7 @@ class FeatureGeneration():
                 xyz_protein = list(map(lambda x : pdb_df.df['ATOM'][pdb_df.df['ATOM']['element_symbol'] == x]
                                        [['x_coord','y_coord','z_coord']].values, self.atoms_list))
                 
-                mat = [np.round(sum(list(map(lambda m : 1./m**int(self.exp),filter(lambda n : n<int(self.cutoff) ,
+                mat = [np.round(sum(list(map(lambda m : 1./m**int(self.exp),filter(lambda n : 0 < n < int(self.cutoff) ,
                         spatial.distance.cdist(xyz_ligand[x],xyz_protein[y]).ravel() )))),decimals = 2) 
                         for x in range(len(self.atoms_list)) for y in range(len(self.atoms_list))]
             
