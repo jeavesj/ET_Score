@@ -10,6 +10,7 @@ from scipy import spatial
 from itertools import repeat
 from biopandas.pdb import PandasPdb
 from biopandas.mol2 import PandasMol2
+import time
 
 warnings.filterwarnings("ignore", message = "Boolean Series key will be reindexed to match DataFrame index")
 
@@ -82,9 +83,12 @@ class FeatureGeneration():
             
         
         distance_df=pd.DataFrame(columns=atoms_combination)
+        timing_records = []
 
         for i in range(len(protein_list)):
             
+            t_start = time.perf_counter()
+
             mol2 = PandasMol2()
             
             pdb = PandasPdb()
@@ -126,8 +130,13 @@ class FeatureGeneration():
             df = pd.DataFrame(data = np.array(mat).reshape(1,np.array(mat).shape[0]), columns = atoms_combination)
             
             distance_df = pd.concat([distance_df,df],axis=0)
+
+            timing_records.append({'pdbid': protein_list[i], 't_prep_s': round(time.perf_counter() - t_start, 4)})
                 
         distance_df.index = os.listdir(self.directory)
+
+        timing_csv = os.path.splitext(self.file_name)[0] + '_timing.csv'
+        pd.DataFrame(timing_records).to_csv(timing_csv, index=False)
         
         distance_df = distance_df.astype(float)
         
