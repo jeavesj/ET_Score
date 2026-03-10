@@ -1,5 +1,6 @@
 
 import sys
+import time
 import joblib
 import argparse
 import numpy as np
@@ -68,5 +69,13 @@ if __name__ == "__main__":
     empty_df = pd.DataFrame(columns = features)
     data = pd.concat([data, empty_df], axis = 0, sort = False).reindex(columns = features).fillna(value = 0.0)
     data = data.replace([np.inf, -np.inf], 0.0)
-    predict = model.predict(data)
-    pd.DataFrame(data = predict, index = data.index, columns = ['prediction']).to_excel('prediction.xlsx')
+
+    t_inf = []
+    predictions = []
+    for idx in data.index:
+        row = data.loc[[idx]]
+        t0 = time.perf_counter()
+        predictions.append(model.predict(row)[0])
+        t_inf.append(round(time.perf_counter() - t0, 6))
+
+    pd.DataFrame({'prediction': predictions, 't_inf_s': t_inf}, index=data.index).to_csv('prediction.csv')
