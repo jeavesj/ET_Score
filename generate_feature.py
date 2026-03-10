@@ -91,9 +91,9 @@ class FeatureGeneration():
             
             protein_folder = os.path.join(self.directory, protein_list[i])
             
-            ligand_path = glob.glob(protein_folder+"\\"+"*.mol2")[0]
+            ligand_path = glob.glob(os.path.join(protein_folder, "*_ligand.mol2"))[0]
 
-            protein_path = glob.glob(protein_folder+"\\"+"*.pdb")[0]
+            protein_path = glob.glob(os.path.join(protein_folder, "*.pdb"))[0]
             
             mol2_df = mol2.read_mol2(ligand_path)
             
